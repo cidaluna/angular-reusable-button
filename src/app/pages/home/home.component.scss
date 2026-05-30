@@ -1,0 +1,9 @@
+.home {
+  display: flex;
+  flex-direction: column;
+
+  &__buttons {
+    justify-content: center;
+    align-items: center;
+  }
+}

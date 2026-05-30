@@ -5,7 +5,7 @@ O objetivo dessa aplicação não é apenas exibir um botão na tela, e sim nave
 
 ### Pre-Requisitos
 - Node.js 18
-- Angular CLI 18.2.0
+- Angular CLI 18.2.19
 
 ## Como rodar a aplicação
 
@@ -34,3 +34,9 @@ O objetivo dessa aplicação não é apenas exibir um botão na tela, e sim nave
 
 ## Screenshots
 
+Tela Home iniciando os botões
+
+![Home Host App](./src/assets/1-initial-angular-reusable-buttons-cida-luna-frontend.png)
+
+
+Tela
