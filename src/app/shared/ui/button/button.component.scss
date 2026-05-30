@@ -1,32 +1,25 @@
 .custom-button {
-  font-family: inherit; // herda a font do body
+  font-family: inherit; // Herda a fonte do body
   font-weight: 500;
   font-size: 16px;
   text-align: center;
-  padding: 16px 32px;
-  border: none;
+  box-sizing: border-box; // Garante que a altura total inclua o padding e a borda nativamente
+  height: 54px;           // Altura exata e idêntica para todos os botões do sistema
+  padding: 0 32px;        // Removemos o padding vertical (a altura cuida disso) e mantemos o espaçamento lateral
+  border: none;           // Reseta a borda nativa do HTML
+  outline: none;
   margin: 12px;
   border-radius: 16px;
   cursor: pointer;
-  background-color: var(--color-blue-600);
-  color: var(--color-white);
   letter-spacing: 1.2px;
+  transition: all 0.2s ease-in-out; // Transição suave quando o botão for clicado
 
-  // Sombra só na parte de baixo
-  // Sintaxe: desloc-x desloc-y blur espalhamento cor
-  box-shadow: 0 6px 0 0 var(--color-blue-900); // Sombra azul escuro logo abaixo
+  display: inline-flex;       // Transforma o botão em um container flexível
+  align-items: center;        // Alinha o ícone e o texto perfeitamente no meio (vertical)
+  justify-content: center;    // Centraliza o conteúdo horizontalmente
+  gap: 8px;                   // Cria o espaçamento ideal entre o ícone e o texto
 
-  // Transição suave quando o botão for clicado
-  transition: all 0.1s ease;
-
-  display: inline-flex; // Transforma o botão em um container flexível
-  align-items: center;  // Alinha o ícone e o texto perfeitamente no meio (vertical)
-  justify-content: center; // Centraliza o conteúdo horizontalmente
-  gap: 8px;            // Cria o espaçamento ideal entre o ícone e o texto
-
-  // Efeito ao clicar (botão afunda)
   &:active {
-    box-shadow: 0 0px 0 0 var(--color-blue-600); // Zera a sombra
     transform: translateY(6px); // Move o botão no mesmo px da sombra para baixo
   }
 
@@ -39,5 +32,63 @@
     align-items: center;
     font-size: 18px;
     color: currentColor;
+  }
+
+  // ==========================================
+  // Variante: Primary (O padrão é fundo Azul)
+  // ==========================================
+  &:not([data-variant]), &[data-variant="primary"] {
+    background-color: var(--color-blue-600);
+    color: var(--color-white);
+    box-shadow: 0 6px 0 0 var(--color-blue-900);
+
+    &:hover {
+      color: var(--color-blue-900);
+      background-color: var(--color-blue-100);
+    }
+    &:active {
+      box-shadow: 0 0px 0 0 var(--color-blue-600);
+    }
+  }
+
+  // ==========================================
+  // Variante: Secondary (Cinza)
+  // ==========================================
+  &[data-variant="secondary"] {
+    background-color: var(--color-gray-600);
+    color: var(--color-white);
+    box-shadow: 0 6px 0 0 var(--color-gray-900);
+
+    &:hover {
+      color: var(--color-gray-900);
+      background-color: var(--color-gray-100);
+    }
+    &:active { box-shadow: 0 0px 0 0 var(--color-gray-600); }
+  }
+
+  // ==========================================
+  // Variante: Outlined
+  // ==========================================
+  &[data-variant="outlined"] {
+    background-color: var(--color-gray-100);
+    color: var(--color-gray-600);
+    box-shadow:
+      inset 0 0 0 2px var(--color-gray-600),
+      0 6px 0 0 var(--color-gray-600);
+
+    &:hover {
+      color: var(--color-white);
+      background-color: var(--color-gray-600);
+      box-shadow:
+        inset 0 0 0 0 var(--color-gray-900),
+        0 6px 0 0 var(--color-gray-900);
+    }
+
+    &:active {
+      border: none;
+      box-shadow:
+        inset 0 0 0 0 var(--color-gray-600),
+        0 0px 0 0 transparent;
+    }
   }
 }
