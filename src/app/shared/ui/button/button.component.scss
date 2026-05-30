@@ -1,8 +1,27 @@
 .custom-button {
+  font-family: inherit; // herda a font do body
+  font-weight: 500;
+  font-size: 16px;
+  text-align: center;
+  padding: 16px 32px;
+  border: none;
   margin: 12px;
-  padding: 8px 16px;
-  border-radius: 12px;
+  border-radius: 16px;
   cursor: pointer;
-  border: 1px solid black;
-  transition: opacity .15s, transform .1s;
+  background-color: var(--color-blue-600);
+  color: var(--color-white);
+  letter-spacing: 1.2px;
+
+  // Sombra só na parte de baixo
+  // Sintaxe: desloc-x desloc-y blur espalhamento cor
+  box-shadow: 0 6px 0 0 var(--color-blue-900);; // Sombra azul escuro logo abaixo
+
+  // Transição suave quando o botão for clicado
+  transition: all 0.1s ease;
+
+  // Efeito ao clicar (botão afunda)
+  &:active {
+    box-shadow: 0 0px 0 0 var(--color-blue-600); // Zera a sombra
+    transform: translateY(6px); // Move o botão no mesmo px da sombra para baixo
+  }
 }
