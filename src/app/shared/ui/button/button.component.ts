@@ -33,6 +33,15 @@ export class ButtonComponent implements OnInit, OnDestroy {
   protected generatedId: string = '';
 
   ngOnInit(): void {
+    this.initializeComponent();
+  }
+
+  ngOnDestroy(): void {
+    // Quando a tela muda ou o botão deixa de existir, liberamos o ID da memória
+    activeButtonIds.delete(this.generatedId);
+  }
+
+  protected initializeComponent() {
     let uniqueId = '';
 
     // Loop de segurança: Gera um sufixo e verifica se ele já existe no Set global.
@@ -47,13 +56,8 @@ export class ButtonComponent implements OnInit, OnDestroy {
     activeButtonIds.add(uniqueId);
   }
 
-  ngOnDestroy(): void {
-    // Quando a tela muda ou o botão deixa de existir, liberamos o ID da memória
-    activeButtonIds.delete(this.generatedId);
-  }
-
   handleClickBtn() {
-    console.log('::Clicou no botão:',this.label,'e gerado o id:', this.generatedId);
+    console.log('::Clicou no botão:',this.label,', com o id', this.generatedId);
     this.onClick.emit();
   }
 
