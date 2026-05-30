@@ -36,7 +36,10 @@ O objetivo dessa aplicação não é apenas exibir um botão na tela, e sim nave
 
 Tela Home iniciando os botões
 
-![Home Host App](./src/assets/2-initial-angular-reusable-buttons-cida-luna-frontend.png)
+![Home](./src/assets/2-initial-angular-reusable-buttons-cida-luna-frontend.png)
 
 
-Tela
+Botões reutilizáveis ganhando estilos
+
+![Home](./src/assets/3-initial-angular-reusable-buttons-cida-luna-frontend.png)
+

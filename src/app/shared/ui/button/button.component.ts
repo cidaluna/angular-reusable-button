@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ButtonConfig, ButtonSize, ButtonType, ButtonVariant } from '../../interfaces/button.interface';
 
 @Component({
@@ -20,4 +20,10 @@ export class ButtonComponent {
   @Input() loading?: string;
   @Input() disabled?: string;
   @Input() type?: ButtonType;
+  @Output() onClick = new EventEmitter();
+
+  handleClickBtn() {
+    console.log('::Clicou no botão: ', this.label);
+    this.onClick.emit();
+  }
 }
