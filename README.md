@@ -36,16 +36,18 @@ angular-reusable-button-694kac
   ```
 
 5. **Navegue na URL que o comando anterior apresentou**
-
+  ```bash 
+    http://localhost:4200/
+  ```
 
 ## 🎨 Demonstração Visual
 
-1. Tela Home iniciando os botões
+- Tela Home iniciando os botões
 
 ![Home](./src/assets/2-initial-angular-reusable-buttons-cida-luna-frontend.png)
 
 
-2. Botões reutilizáveis ganhando estilos
+- Botões reutilizáveis ganhando estilos
 
 ![Home](./src/assets/3-initial-angular-reusable-buttons-cida-luna-frontend.png)
 
