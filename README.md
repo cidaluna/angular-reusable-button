@@ -1,17 +1,11 @@
 # Angular Reusable Button
 
-Esse projeto foi criado com [Angular CLI](https://github.com/angular/angular-cli) versão 18.2.19.
-O objetivo dessa aplicação não é apenas exibir um botão na tela, e sim navegar pelos benefícios que o uso de um botão reutilizável traz para a arquitetura frontend.
+Esse projeto foi desenvolvido utilizando a versão moderna do **Angular 18+ (Componentes Standalone)** e **SCSS**.
+O objetivo central desta aplicação não é apenas exibir um botão na tela, mas sim demonstrar na prática os benefícios arquiteturais que a criação de **Componentes Reutilizáveis** traz para a escalabilidade do desenvolvimento frontend, seguindo padrões de **Clean Code**, **SOLID** e **Design System**.
 
 ### 📋 Pré-Requisitos
 - Node.js 18
 - Angular CLI 18.2.19
-
-### Gerar ids para os botões na camada frontend
-Poderíamos usar nos botões reutilizáveis IDs simples como 1, 2 e 3. Mas se tivermos múltiplos desenvolvedores usando nosso botão em várias telas ao mesmo tempo, os IDs vão colidir e quebrar os testes automatizados do projeto. Por isso, criamos um mecanismo nativo e seguro usando a API de criptografia do próprio navegador para gerar chaves alfanuméricas únicas. E para garantir segurança, usamos um validador na memória para que um botão nunca copie o ID do outro!
-Exemplo:
-angular-reusable-button-vry833
-angular-reusable-button-694kac
 
 ## 🚀 Como rodar a aplicação
 
@@ -20,39 +14,53 @@ angular-reusable-button-694kac
     git clone https://github.com/cidaluna/angular-reusable-button.git
   ```
 
-2. **Navegue no diretório principal**
+2. **Navegue até o diretório do projeto**
 ```bash
   cd angular-reusable-button
 ```
 
-3. **No diretório do projeto execute o comando**
+3. **Instale as dependências do projeto**
   ```bash 
     npm install
   ```
 
-4. **Em seguida, execute a aplicação**
+4. **Inicie a aplicação Angular**
   ```bash 
     ng serve
   ```
 
-5. **Navegue na URL que o comando anterior apresentou**
-  ```bash 
-    http://localhost:4200/
-  ```
+5. **Abra o seu navegador e acesse a aplicação em:**
+  ```text
+   http://localhost:4200/
+   ```
 
-##  Aprendizados
-##  O Mistério do Componente "Casca" e o Poder do `@HostBinding`
+### Geração Dinâmica de IDs Criptográficos (Client-Side)
+Em aplicações corporativas de grande porte, atribuir IDs sequenciais estáticos (`1`, `2`, `3`) em componentes compartilhados gera colisões graves no DOM, quebrando ferramentas de leitores de tela (**WCAG**) e invalidando testes automatizados (**Cypress / Playwright**).
+
+Para solucionar este problema de forma 100% isolada e sem dependência de banco de dados, implementamos um gerador de sufixos alfanuméricos na inicialização do componente (`ngOnInit`) integrado a um validador de memória (`Set`).
+
+* **Web Crypto API:** Utilizamos o método `crypto.getRandomValues()` para garantir aleatoriedade real de 3 letras e 3 números misturados.
+* **Memory Leak Prevention:** Através do gancho de ciclo de vida `ngOnDestroy`, os IDs são destruídos da memória assim que o componente deixa a tela.
+
+```html
+<!-- Exemplo real de IDs únicos, imprevisíveis e imunes à colisão gerados no DOM: -->
+<button class="custom-button" id="ng-reusable-btn-vry833">...</button>
+<button class="custom-button" id="ng-reusable-btn-694kac">...</button>
+```
+---
+
+### 💡 O Mistério do Componente "Casca" e o Poder do `@HostBinding`
 
 Se você já tentou criar um componente reutilizável em Angular e usou Flexbox no componente pai, provavelmente se deparou com um bug invisível: **o botão com largura `width="full"` simplesmente recusa-se a esticar ou quebrar a linha**, mesmo com o CSS interno configurado perfeitamente.
 
 Por que isso acontece? Vamos entender a anatomia oculta do Angular no navegador:
 
-### 🕵️‍♂️ O Problema Oculto: A Tag `<app-button>`
+#### 🕵️‍♂️ O Problema Oculto: A Tag `<app-button>`
 
 Quando consumimos nosso componente em uma página pai, escrevemos assim:
 ```html
 <div class="home__buttons">
-  <app-button width="full">Avançar</app-button>
+  <app-button width="full">Exportar</app-button>
 </div>
 ```
 
@@ -60,9 +68,8 @@ Para o navegador, a tag `<app-button>` funciona como uma **caixa externa invisí
 
 O Flexbox do pai (`.home__buttons`) só consegue enxergar e aplicar regras de layout na **casca**. Como a casca não tem propriedades flexíveis nativas, o botão interno tenta esticar para `100%`, mas fica preso em uma caixa sem largura definida.
 
----
 
-### 🚀 A Solução Arquitetural: Engenharia de Alto Nível
+#### ⚡ A Solução Arquitetural: Engenharia de Alto Nível
 
 Para resolver isso de forma elegante, sem usar *classes utilitárias* espalhadas ou JavaScript invasivo para manipular o HTML, adotamos o estado da arte do Angular moderno:
 
@@ -86,16 +93,15 @@ Veja a diferença brutal no HTML que o navegador renderiza após essa linha de c
 ```html
 <!-- 🛑 ANTES (Sem HostBinding): A casca está vazia. O Flexbox do pai ignora o botão. -->
 <app-button> 
-  <button class="custom-button" data-width="full">Avançar</button>
+  <button class="custom-button" data-width="full">Exportar</button>
 </app-button>
 
 <!-- ✅ DEPOIS (Com HostBinding): A casca ganha o atributo e o Flexbox assume o controle! -->
 <app-button data-width="full"> 
-  <button class="custom-button" data-width="full">Avançar</button>
+  <button class="custom-button" data-width="full">Exportar</button>
 </app-button>
 ```
 
----
 
 ### 🎨 Conectando com o SCSS (`:host`)
 
@@ -114,9 +120,8 @@ Com o atributo injetado na casca do componente, usamos o seletor especial **`:ho
 }
 ```
 
----
 
-### 💡 Quando e por que usar essa abordagem?
+#### 💡 Quando e por que usar essa abordagem?
 
 * **Por que adotamos?** Porque respeita o **Encapsulamento de Componentes** e o **Clean Code**. O componente pai se preocupa apenas em definir o espaço da tela (`width: 45%`), e o botão gerencia autonomamente como ele vai se comportar dentro desse limite.
 * **Quando usar?** Sempre que você estiver construindo componentes reutilizáveis (como botões, inputs, cards ou modais) que precisam responder e se alinhar dinamicamente aos layouts de Grid ou Flexbox dos componentes pais.
