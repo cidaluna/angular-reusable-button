@@ -1,1 +1,12 @@
-<button class="custom-button" (click)="handleClickBtn()">{{ label }}</button>
+<button
+  class="custom-button"
+  [attr.aria-label]="ariaLabel || null"
+  [attr.data-icon-pos]="iconPos"
+  (click)="handleClickBtn()">
+  @if (iconName) {
+    <!-- Ele busca na biblioteca global automaticamente usando a string -->
+    <!-- Usar o aria-hidden="true" avisa ao leitor de tela para ignorar o ícone -->
+    <fa-icon [icon]="['fas', iconName]" aria-hidden="true" class="custom-button__icon"></fa-icon>
+  }
+  {{ label }}
+</button>

@@ -7,6 +7,7 @@ export interface ButtonConfig {
   label: string;
   icon?: string;
   iconPos?: 'left' | 'right';
+  ariaLabel?: string;
   variant?: ButtonVariant;
   size?: ButtonSize;
   width?: 'auto' | 'full';
