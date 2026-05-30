@@ -34,7 +34,7 @@ O objetivo central desta aplicação não é apenas exibir um botão na tela, ma
    http://localhost:4200/
    ```
 
-### Geração Dinâmica de IDs Criptográficos (Client-Side)
+### 🔑 Geração Dinâmica de IDs Criptográficos (Client-Side)
 Em aplicações corporativas de grande porte, atribuir IDs sequenciais estáticos (`1`, `2`, `3`) em componentes compartilhados gera colisões graves no DOM, quebrando ferramentas de leitores de tela (**WCAG**) e invalidando testes automatizados (**Cypress / Playwright**).
 
 Para solucionar este problema de forma 100% isolada e sem dependência de banco de dados, implementamos um gerador de sufixos alfanuméricos na inicialização do componente (`ngOnInit`) integrado a um validador de memória (`Set`).
@@ -69,7 +69,7 @@ Para o navegador, a tag `<app-button>` funciona como uma **caixa externa invisí
 O Flexbox do pai (`.home__buttons`) só consegue enxergar e aplicar regras de layout na **casca**. Como a casca não tem propriedades flexíveis nativas, o botão interno tenta esticar para `100%`, mas fica preso em uma caixa sem largura definida.
 
 
-#### ⚡ A Solução Arquitetural: Engenharia de Alto Nível
+#### ☑️ A Solução Arquitetural: Engenharia de Alto Nível
 
 Para resolver isso de forma elegante, sem usar *classes utilitárias* espalhadas ou JavaScript invasivo para manipular o HTML, adotamos o estado da arte do Angular moderno:
 
@@ -86,24 +86,25 @@ width: 'auto' | 'full' = 'auto';
 | **`@HostBinding()`** | Espelho Automático | Captura o valor da variável e o "injeta" como um atributo HTML na tag externa (`<app-button>`). |
 | **`attr.data-width`** | Semântica Web | Cria um atributo limpo (`data-width="full"`) que o CSS consegue ler instantaneamente. |
 
-#### 🔄 O DOM do Navegador: Antes vs. Depois
 
-Veja a diferença brutal no HTML que o navegador renderiza após essa linha de código:
+#### 🌐 O DOM do Navegador: Antes vs. Depois
+
+Veja a diferença no HTML que o navegador renderiza após essa linha de código:
 
 ```html
-<!-- 🛑 ANTES (Sem HostBinding): A casca está vazia. O Flexbox do pai ignora o botão. -->
+<!-- ANTES (Sem HostBinding): A casca está vazia. O Flexbox do pai ignora o botão. -->
 <app-button> 
   <button class="custom-button" data-width="full">Exportar</button>
 </app-button>
 
-<!-- ✅ DEPOIS (Com HostBinding): A casca ganha o atributo e o Flexbox assume o controle! -->
+<!-- DEPOIS (Com HostBinding): A casca ganha o atributo e o Flexbox assume o controle! -->
 <app-button data-width="full"> 
   <button class="custom-button" data-width="full">Exportar</button>
 </app-button>
 ```
 
 
-#### 🎨 Conectando com o SCSS (`:host`)
+#### 🖌️ Conectando com o SCSS (`:host`)
 
 Com o atributo injetado na casca do componente, usamos o seletor especial **`:host`** no SCSS do filho. Ele diz ao navegador para estilizar a própria tag `<app-button>` de fora:
 
@@ -121,7 +122,7 @@ Com o atributo injetado na casca do componente, usamos o seletor especial **`:ho
 ```
 
 
-#### 💡 Quando e por que usar essa abordagem?
+#### 🗺️ Quando e por que usar essa abordagem?
 
 * **Por que adotamos?** Porque respeita o **Encapsulamento de Componentes** e o **Clean Code**. O componente pai se preocupa apenas em definir o espaço da tela (`width: 45%`), e o botão gerencia autonomamente como ele vai se comportar dentro desse limite.
 * **Quando usar?** Sempre que você estiver construindo componentes reutilizáveis (como botões, inputs, cards ou modais) que precisam responder e se alinhar dinamicamente aos layouts de Grid ou Flexbox dos componentes pais.
