@@ -103,7 +103,7 @@ Veja a diferença brutal no HTML que o navegador renderiza após essa linha de c
 ```
 
 
-### 🎨 Conectando com o SCSS (`:host`)
+#### 🎨 Conectando com o SCSS (`:host`)
 
 Com o atributo injetado na casca do componente, usamos o seletor especial **`:host`** no SCSS do filho. Ele diz ao navegador para estilizar a própria tag `<app-button>` de fora:
 
@@ -126,7 +126,7 @@ Com o atributo injetado na casca do componente, usamos o seletor especial **`:ho
 * **Por que adotamos?** Porque respeita o **Encapsulamento de Componentes** e o **Clean Code**. O componente pai se preocupa apenas em definir o espaço da tela (`width: 45%`), e o botão gerencia autonomamente como ele vai se comportar dentro desse limite.
 * **Quando usar?** Sempre que você estiver construindo componentes reutilizáveis (como botões, inputs, cards ou modais) que precisam responder e se alinhar dinamicamente aos layouts de Grid ou Flexbox dos componentes pais.
 
-
+---
 
 ## 🎨 Demonstração Visual
 
