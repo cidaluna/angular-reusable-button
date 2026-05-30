@@ -42,12 +42,12 @@ angular-reusable-button-694kac
 
 ## 🎨 Demonstração Visual
 
-- Tela Home iniciando os botões
+- **Tela Home iniciando os botões**
 
 ![Home](./src/assets/2-initial-angular-reusable-buttons-cida-luna-frontend.png)
 
 
-- Botões reutilizáveis ganhando estilos
+- **Botões reutilizáveis ganhando estilos**
 
 ![Home](./src/assets/3-initial-angular-reusable-buttons-cida-luna-frontend.png)
 
