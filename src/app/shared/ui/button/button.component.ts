@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { ButtonConfig, ButtonSize, ButtonType, ButtonVariant } from '../../interfaces/button.interface';
+import { Component, EventEmitter, HostBinding, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { ButtonType, ButtonVariant } from '../../interfaces/button.interface';
 import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
@@ -20,14 +20,15 @@ export class ButtonComponent implements OnInit, OnDestroy {
   @Input() iconName?: string;
   @Input() iconPos?: 'left' | 'right' = 'left';
   @Input() ariaLabel?: string;
-  @Input() variant?: ButtonVariant;
-  @Input() size?: ButtonSize;
-  @Input() width?: 'auto' | 'full';
+  @Input() variant?: ButtonVariant; // Padrão primary azul
   @Input() rounded?: string;
   @Input() loading?: string;
   @Input() disabled?: string;
   @Input() type?: ButtonType;
   @Output() onClick = new EventEmitter();
+
+  // Toda vez que receber o input width, pegue esse valor recebido e injete na casca externa <app-button> automaticamente
+  @Input() @HostBinding('attr.data-width') width: 'auto' | 'full' = 'auto';
 
   // ID que será injetado no DOM
   protected generatedId: string = '';

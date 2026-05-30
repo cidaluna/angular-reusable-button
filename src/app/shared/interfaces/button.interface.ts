@@ -1,6 +1,5 @@
-export type ButtonSize = 'sm' | 'md' | 'lg';
 export type ButtonType = 'button' | 'submit' | 'reset';
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'outlined';
+export type ButtonVariant = 'primary' | 'secondary' | 'outlined';
 
 export interface ButtonConfig {
   id?: string;
@@ -9,7 +8,6 @@ export interface ButtonConfig {
   iconPos?: 'left' | 'right';
   ariaLabel?: string;
   variant?: ButtonVariant;
-  size?: ButtonSize;
   width?: 'auto' | 'full';
   rounded?: boolean;
   loading?: boolean;

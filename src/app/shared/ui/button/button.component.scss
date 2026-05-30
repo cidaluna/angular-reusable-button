@@ -1,3 +1,14 @@
+// Estilização da casca externa do componente filho <app-button>
+:host {
+  display: inline-flex; // Permite que o componente se comporte bem em layouts flexbox do pai
+
+  // Quando o pai passar width="full", a CASCA do componente assume o controle do Flexbox
+  &[data-width="full"] {
+    width: 100%;        // Ocupa os 100% dos X% delimitados pelo pai
+    flex-basis: 100%;   // Força o Flexbox do pai a empurrar este botão para uma nova linha
+  }
+}
+
 .custom-button {
   font-family: inherit; // Herda a fonte do body
   font-weight: 500;
@@ -8,7 +19,7 @@
   padding: 0 32px;        // Removemos o padding vertical (a altura cuida disso) e mantemos o espaçamento lateral
   border: none;           // Reseta a borda nativa do HTML
   outline: none;
-  margin: 12px;
+  margin: 12px 12px 12px 0;
   border-radius: 16px;
   cursor: pointer;
   letter-spacing: 1.2px;
@@ -32,6 +43,24 @@
     align-items: center;
     font-size: 18px;
     color: currentColor;
+  }
+
+  // Garante que o botão interno preencha toda a casca que foi esticada pelo :host
+  &[data-width="full"] {
+    width: 100%;
+  }
+
+  // ==========================================
+  // Largura do botão reutilizável Angular
+  // ==========================================
+  &[data-width="auto"] {
+    width: auto; // Ocupa apenas o tamanho do conteúdo
+  }
+
+  &[data-width="full"] {
+    width: 100%; // Estica 100% no elemento pai
+    margin-left: 0;  // Dica de ouro: zera as margens laterais quando for full para não estourar o grid
+    margin-right: 0;
   }
 
   // ==========================================
