@@ -14,14 +14,31 @@
 
   // Sombra só na parte de baixo
   // Sintaxe: desloc-x desloc-y blur espalhamento cor
-  box-shadow: 0 6px 0 0 var(--color-blue-900);; // Sombra azul escuro logo abaixo
+  box-shadow: 0 6px 0 0 var(--color-blue-900); // Sombra azul escuro logo abaixo
 
   // Transição suave quando o botão for clicado
   transition: all 0.1s ease;
+
+  display: inline-flex; // Transforma o botão em um container flexível
+  align-items: center;  // Alinha o ícone e o texto perfeitamente no meio (vertical)
+  justify-content: center; // Centraliza o conteúdo horizontalmente
+  gap: 8px;            // Cria o espaçamento ideal entre o ícone e o texto
 
   // Efeito ao clicar (botão afunda)
   &:active {
     box-shadow: 0 0px 0 0 var(--color-blue-600); // Zera a sombra
     transform: translateY(6px); // Move o botão no mesmo px da sombra para baixo
+  }
+
+  &[data-icon-pos="right"] fa-icon {
+    order: 2;
+  }
+
+  fa-icon {
+    display: inline-flex;
+    align-items: center;
+    font-size: 18px;
+    color: currentColor;
+    order: 1;
   }
 }
