@@ -31,7 +31,7 @@
   }
 
   &[data-icon-pos="right"] fa-icon {
-    order: 2;
+    order: 1;
   }
 
   fa-icon {
@@ -39,6 +39,5 @@
     align-items: center;
     font-size: 18px;
     color: currentColor;
-    order: 1;
   }
 }
