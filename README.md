@@ -131,16 +131,16 @@ Com o atributo injetado na casca do componente, usamos o seletor especial **`:ho
 
 ## 🎨 Demonstração Visual
 
-- **Estrutura inicial dos botões reutilizáveis em Angular**
+#### Estrutura inicial dos botões reutilizáveis em Angular
 
 ![Base dos botões](./src/assets/2-initial-angular-reusable-buttons-cida-luna-frontend.png)
 
 
-- **Botões reutilizáveis ganhando identidade visual**
+#### Botões reutilizáveis ganhando identidade visual
 
 ![Botões com estilo](./src/assets/3-initial-angular-reusable-buttons-cida-luna-frontend.png)
 
 
-- **Botões avançando com ícones e variantes de estilos**
+#### Botões avançando com ícones e variantes de estilos
 
 ![Botões com variantes de estilo](./src/assets/4-initial-angular-reusable-buttons-cida-luna-frontend.png)
