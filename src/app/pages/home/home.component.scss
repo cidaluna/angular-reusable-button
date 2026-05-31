@@ -1,9 +1,12 @@
 .home {
   display: flex;
   flex-direction: column;
+  margin: 0 12px;
 
   &__buttons {
-    justify-content: center;
-    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    width: 45%;
   }
 }

@@ -1,3 +1,27 @@
+// Estilização da casca externa do componente filho <app-button>
+:host {
+  display: inline-flex; // Permite que o componente se comporte bem em layouts flexbox do pai
+
+  // Quando o pai passar width="full", a CASCA do componente assume o controle do Flexbox
+  &[data-width="full"] {
+    width: 100%;        // Ocupa os 100% dos X% delimitados pelo pai
+    flex-basis: 100%;   // Força o Flexbox do pai a empurrar este botão para uma nova linha
+  }
+
+  // Estilização do foco de teclado (WCAG 2.4.7)
+  // Aplica um contorno visível apenas quando o usuário navega via teclado (Tab)
+  &:focus-visible {
+    outline: 3px solid var(--color-blue-600); // Anel de foco nítido de alta visibilidade
+    outline-offset: 4px;                      // Separa a borda do botão elegantemente
+    border-radius: 16px;                      // Acompanha a curvatura do botão filho
+  }
+
+  // Quando o botão estiver desabilitado, removemos o contorno de foco do teclado
+  &[disabled="true"], &[disabled] {
+    outline: none !important;
+  }
+}
+
 .custom-button {
   font-family: inherit; // Herda a fonte do body
   font-weight: 500;
@@ -8,7 +32,7 @@
   padding: 0 32px;        // Removemos o padding vertical (a altura cuida disso) e mantemos o espaçamento lateral
   border: none;           // Reseta a borda nativa do HTML
   outline: none;
-  margin: 12px;
+  margin: 12px 12px 12px 0;
   border-radius: 16px;
   cursor: pointer;
   letter-spacing: 1.2px;
@@ -32,6 +56,24 @@
     align-items: center;
     font-size: 18px;
     color: currentColor;
+  }
+
+  // Garante que o botão interno preencha toda a casca que foi esticada pelo :host
+  &[data-width="full"] {
+    width: 100%;
+  }
+
+  // ==========================================
+  // Largura do botão reutilizável Angular
+  // ==========================================
+  &[data-width="auto"] {
+    width: auto; // Ocupa apenas o tamanho do conteúdo
+  }
+
+  &[data-width="full"] {
+    width: 100%; // Estica 100% no elemento pai
+    margin-left: 0;  // Dica de ouro: zera as margens laterais quando for full para não estourar o grid
+    margin-right: 0;
   }
 
   // ==========================================
@@ -89,6 +131,25 @@
       box-shadow:
         inset 0 0 0 0 var(--color-gray-600),
         0 0px 0 0 transparent;
+    }
+  }
+
+  &:disabled {
+    cursor: not-allowed; // Cursor de bloqueio visível
+    transform: none !important; // Impede completamente o botão de afundar fisicamente
+
+    // Tratamento para botões SÓLIDOS desabilitados (Primary e Secondary)
+    &:not([data-variant="outlined"]) {
+      background-color: var(--color-gray-300) !important; // Tom fosco opaco
+      color: var(--color-gray-600) !important; // Texto legível, porém suavizado
+      box-shadow: 0 2px 0 0 var(--color-gray-600) !important; // Sombra achatada de feedback estático
+    }
+
+    // Tratamento exclusivo para a variante OUTLINED desabilitada
+    &[data-variant="outlined"] {
+      background-color: var(--color-gray-100) !important;
+      color: var(--color-gray-300) !important; // Linhas e textos perdem o contraste ativo
+      box-shadow: inset 0 0 0 2px var(--color-gray-300) !important; // Borda sutil e plana
     }
   }
 }
