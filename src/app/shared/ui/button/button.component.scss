@@ -7,6 +7,19 @@
     width: 100%;        // Ocupa os 100% dos X% delimitados pelo pai
     flex-basis: 100%;   // Força o Flexbox do pai a empurrar este botão para uma nova linha
   }
+
+  // Estilização do foco de teclado (WCAG 2.4.7)
+  // Aplica um contorno visível apenas quando o usuário navega via teclado (Tab)
+  &:focus-visible {
+    outline: 3px solid var(--color-blue-600); // Anel de foco nítido de alta visibilidade
+    outline-offset: 4px;                      // Separa a borda do botão elegantemente
+    border-radius: 16px;                      // Acompanha a curvatura do botão filho
+  }
+
+  // Quando o botão estiver desabilitado, removemos o contorno de foco do teclado
+  &[disabled="true"], &[disabled] {
+    outline: none !important;
+  }
 }
 
 .custom-button {
@@ -118,6 +131,25 @@
       box-shadow:
         inset 0 0 0 0 var(--color-gray-600),
         0 0px 0 0 transparent;
+    }
+  }
+
+  &:disabled {
+    cursor: not-allowed; // Cursor de bloqueio visível
+    transform: none !important; // Impede completamente o botão de afundar fisicamente
+
+    // Tratamento para botões SÓLIDOS desabilitados (Primary e Secondary)
+    &:not([data-variant="outlined"]) {
+      background-color: var(--color-gray-300) !important; // Tom fosco opaco
+      color: var(--color-gray-600) !important; // Texto legível, porém suavizado
+      box-shadow: 0 2px 0 0 var(--color-gray-600) !important; // Sombra achatada de feedback estático
+    }
+
+    // Tratamento exclusivo para a variante OUTLINED desabilitada
+    &[data-variant="outlined"] {
+      background-color: var(--color-gray-100) !important;
+      color: var(--color-gray-300) !important; // Linhas e textos perdem o contraste ativo
+      box-shadow: inset 0 0 0 2px var(--color-gray-300) !important; // Borda sutil e plana
     }
   }
 }

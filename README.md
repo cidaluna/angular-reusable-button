@@ -7,6 +7,17 @@ O objetivo central desta aplicação não é apenas exibir um botão na tela, ma
 - Node.js 18
 - Angular CLI 18.2.19
 
+### O que foi praticado neste projeto
+
+- Criação de botão reutilizável no Angular
+- Uso de @Input e @Output
+- Tipagem forte com TypeScript
+- Boas práticas de acessibilidade
+- Customização via propriedades
+- Separação de responsabilidades
+- Estilização com SCSS
+
+
 ## 🚀 Como rodar a aplicação
 
 1. **Clone o repositório:**
@@ -129,18 +140,80 @@ Com o atributo injetado na casca do componente, usamos o seletor especial **`:ho
 
 ---
 
+## 🕹️ Acessibilidade nas interações do usuário
+
+No desenvolvimento frontend, a acessibilidade transforma a maneira como controlamos as interações do usuário. Como nosso componente foi blindado para receber o foco do teclado de forma nativa, o clique agora pode vir de três origens físicas diferentes:
+
+*   🖱️ **Mouse:** O clique tradicional na tela.
+*   ⌨️ **Tecla Enter:** O acionamento padrão de formulários via teclado.
+*   ⎵ **Barra de Espaço:** A mecânica nativa de ativação de botões no sistema operacional.
+
+#### A Solução Arquitetural: Empacotamento de Dados
+
+Em vez de forçar o componente pai a gerenciar múltiplos listeners e tentar adivinhar como o usuário interagiu com a tela, a melhor prática de engenharia de software é aplicar a **Separação de Conceitos (SoC)**. 
+
+O componente filho intercepta todas as entradas físicas, isola as regras mecânicas e **empacota todas as informações necessárias em um único objeto JavaScript estruturado**. Após centralizar esses dados, o filho despacha o pacote para o pai através de um único canal de comunicação: o `btnClick.emit()`.
+
+```typescript
+// O Contrato de Dados (Interface Pública de Evento)
+export interface ButtonClickEvent {
+  id: string;
+  label: string;
+  triggeredBy: 'mouse' | 'keyboard'; // Identifica a origem exata da ação
+}
+```
+#### O Fluxo de Comunicação Didático
+
+```text
+ [Ação do Usuário]             [Componente Filho]               [Componente Pai]
+   (Mouse/Teclado)  ────────>  Captura c/ @HostListener  ──────>  (btnClick)="função($event)"
+                                   + Empacota ID/Label
+                                   + Injeta 'triggeredBy'
+```
+
+#### O Resultado no Console do Desenvolvedor (F12)
+
+Quando o componente pai consome esse evento unificado através de `handleButtonAction($event)`, ele ganha superpoderes de rastreabilidade e métricas de auditoria limpas no terminal:
+
+```text
+:: Clicou no botão: "Salvar Dados" | ID no DOM: "angular-reusable-button-vry833" | Acionado por: [mouse]
+:: Clicou no botão: "Cancelar Envio" | ID no DOM: "angular-reusable-button-694kac" | Acionado por: [keyboard]
+```
+
+#### Por que essa abordagem é considerada Clean Code?
+
+1. **Inteligência Isolada:** O componente pai continua totalmente "burro" em relação à mecânica física. Ele não precisa saber se o usuário usou o teclado ou o mouse; ele apenas recebe o pacote pronto e executa a regra de negócio (ex: salvar ou baixar).
+2. **Prevenção de Comportamento Involuntário:** Ao usar o `event.preventDefault()` na tecla de espaço, evitamos aquele bug clássico em que a página do site rola para baixo inteira enquanto o usuário tenta apenas ativar o botão pelo teclado.
+
+---
+
 ## 🎨 Demonstração Visual
 
-#### 1. Estrutura inicial dos botões reutilizáveis em Angular
+### 1. Estrutura inicial dos botões reutilizáveis em Angular
 
 ![Base dos botões](./src/assets/2-initial-angular-reusable-buttons-cida-luna-frontend.png)
 
 
-#### 2. Botões reutilizáveis ganhando identidade visual
+### 2. Botões reutilizáveis ganhando identidade visual
 
 ![Botões com estilo](./src/assets/3-initial-angular-reusable-buttons-cida-luna-frontend.png)
 
 
-#### 3. Botões avançando com ícones e variantes de estilos
+### 3. Botões avançando com ids, ícones e variantes de estilos
 
 ![Botões com variantes de estilo](./src/assets/4-initial-angular-reusable-buttons-cida-luna-frontend.png)
+
+
+### 4. Botões flexíveis com largura total e adaptação de layout
+
+![Botões com largura full](./src/assets/5-initial-angular-reusable-buttons-cida-luna-frontend.png)
+
+
+### 5. Botões agrupados para demontração de código
+
+![Botões com largura full](./src/assets/6-initial-angular-reusable-buttons-cida-luna-frontend.png)
+
+
+### 6. Botões com acessibilidade via mouse e teclado
+
+![Botões com acessibilidade](./src/assets/7-initial-angular-reusable-buttons-cida-luna-frontend.png)

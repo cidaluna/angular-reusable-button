@@ -1,11 +1,15 @@
-<section class="home">
-  <h1>Angular reusable buttons</h1>
-  <div class="home__buttons">
-    <app-button label="Salvar" iconName="save" ariaLabel="Salvar dados" iconPos="right" width="auto"></app-button>
-    <app-button label="Exportar" ariaLabel="Exportar arquivo" variant="secondary" width="full"></app-button>
-    <app-button label="Cancelar" ariaLabel="Cancelar envio"></app-button>
-    <app-button label="Excluir" ariaLabel="Excluir dados"></app-button>
-    <app-button label="Carregar" iconName="upload" ariaLabel="Carregar foto" variant="outlined"></app-button>
-    <app-button label="Baixar" ariaLabel="Baixar documento" width="full"></app-button>
+<section class="home" aria-labelledby="home-title">
+  <h1 id="home-title">Angular reusable buttons</h1>
+  <div class="home__buttons" role="group"
+    aria-label="Ações principais do formulário"
+    data-test="button-group">
+    <app-button label="Salvar" iconName="save" ariaLabel="Salvar dados" iconPos="right" width="auto" (btnClick)="btnClickedHome($event)"></app-button>
+    <app-button label="Exportar" ariaLabel="Exportar arquivo" variant="secondary" width="full" (btnClick)="btnClickedHome($event)"></app-button>
+    <app-button label="Cancelar" ariaLabel="Cancelar envio" [disabled]="true" (btnClick)="btnClickedHome($event)"></app-button>
+    <app-button label="Excluir" ariaLabel="Excluir dados" (btnClick)="btnClickedHome($event)"></app-button>
+    <app-button label="Carregar" iconName="upload" ariaLabel="Carregar foto" variant="outlined" (btnClick)="btnClickedHome($event)"></app-button>
+    <app-button label="Salvar" ariaLabel="Confirmar" [disabled]="true" (btnClick)="btnClickedHome($event)"></app-button>
+    <app-button label="Salvar" iconName="save" ariaLabel="Salvar dados" iconPos="right" width="auto" (btnClick)="btnClickedHome($event)"></app-button>
+    <app-button label="Baixar" ariaLabel="Baixar documento" width="full" (btnClick)="btnClickedHome($event)"></app-button>
   </div>
 </section>

@@ -14,3 +14,10 @@ export interface ButtonConfig {
   disabled?:boolean;
   type?: ButtonType;
 }
+
+// Interface que define todas as informações de clique via mouse ou teclado que o pai (home) vai receber
+export interface ButtonClickEvent {
+  id: string;
+  label: string;
+  triggeredBy: 'mouse' | 'keyboard';
+}
