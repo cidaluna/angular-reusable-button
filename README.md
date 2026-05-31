@@ -189,31 +189,31 @@ Quando o componente pai consome esse evento unificado através de `handleButtonA
 
 ## 🎨 Demonstração Visual
 
-### 1. Estrutura inicial dos botões reutilizáveis em Angular
+### 🔹 Estrutura inicial dos botões reutilizáveis em Angular
 
 ![Base dos botões](./src/assets/2-initial-angular-reusable-buttons-cida-luna-frontend.png)
 
 
-### 2. Botões reutilizáveis ganhando identidade visual
+### 🔹 Botões reutilizáveis ganhando identidade visual
 
 ![Botões com estilo](./src/assets/3-initial-angular-reusable-buttons-cida-luna-frontend.png)
 
 
-### 3. Botões avançando com ids, ícones e variantes de estilos
+### 🔹 Botões avançando com ids, ícones e variantes de estilos
 
 ![Botões com variantes de estilo](./src/assets/4-initial-angular-reusable-buttons-cida-luna-frontend.png)
 
 
-### 4. Botões flexíveis com largura total e adaptação de layout
+### 🔹 Botões flexíveis com largura total, adaptação de layout e acionado por mouse ou teclado
 
 ![Botões com largura full](./src/assets/5-initial-angular-reusable-buttons-cida-luna-frontend.png)
 
 
-### 5. Botões agrupados para demontração de código
+### 🔹 Botões agrupados para demonstração de código
 
-![Botões com largura full](./src/assets/6-initial-angular-reusable-buttons-cida-luna-frontend.png)
+![Botões agrupados](./src/assets/6-initial-angular-reusable-buttons-cida-luna-frontend.png)
 
 
-### 6. Botões com acessibilidade via mouse e teclado
+### 🔹 Botões com acessibilidade aplicada
 
 ![Botões com acessibilidade](./src/assets/7-initial-angular-reusable-buttons-cida-luna-frontend.png)
