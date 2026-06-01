@@ -10,7 +10,7 @@ O objetivo central desta aplicação não é apenas exibir um botão na tela, ma
 ### O que foi praticado neste projeto
 
 - Criação de botão reutilizável no Angular
-- Uso de @Input e @Output
+- Uso de signals, @HostListener, @HostBinding
 - Tipagem forte com TypeScript
 - Boas práticas de acessibilidade
 - Customização via propriedades
