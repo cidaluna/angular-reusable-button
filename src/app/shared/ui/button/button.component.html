@@ -1,16 +1,56 @@
+<!--
+  button.component.html
+  ─────────────────────────────────────────────────────────────────────────────
+  Todos os inputs são signals — sempre use label(), loading(), iconName(), etc.
+  A casca <app-button> recebe role, tabindex e aria-disabled via HostBinding.
+  Este <button> nativo é o elemento interativo real dentro da casca.
+  ─────────────────────────────────────────────────────────────────────────────
+-->
+
 <button
-  class="custom-button"
-  [id]="generatedId"
-  [type]="type"
-  [disabled]="disabled"
-  [attr.aria-label]="ariaLabel || null"
-  [attr.data-icon-pos]="iconPos"
-  [attr.data-variant]="variant"
-  [attr.data-width]="width">
-  @if (iconName) {
-    <!-- Ele busca na biblioteca global automaticamente usando a string -->
-    <!-- Usar o aria-hidden="true" avisa ao leitor de tela para ignorar o ícone -->
-    <fa-icon [icon]="['fas', iconName]" aria-hidden="true" class="custom-button__icon"></fa-icon>
+  [id]="generatedId()"
+  [type]="type()"
+  [disabled]="isInactive()"
+  [class]="buttonClasses()"
+  [attr.aria-label]="ariaLabel() || null"
+  [attr.aria-busy]="loading() || null"
+  [attr.data-icon-pos]="iconName() ? iconPos() : null"
+  [attr.data-variant]="variant() ?? 'primary'"
+  [attr.data-width]="width()"
+>
+
+  <!-- ── Spinner — substitui o ícone durante loading ───────────────────────── -->
+  @if (loading()) {
+    <span class="custom-button__spinner" aria-hidden="true"></span>
   }
-    {{ label }}
+
+  <!-- ── Ícone esquerda — oculto durante loading ───────────────────────────── -->
+  @if (iconName() && iconPos() === 'left' && !loading()) {
+    <!--
+      ['fas', iconName()!] — o ! descarta undefined pois o @if já garante
+      que iconName() tem valor aqui. aria-hidden="true" ignora o ícone
+      nos leitores de tela — o aria-label do <button> já descreve a ação.
+    -->
+    <fa-icon
+      [icon]="['fas', iconName()!]"
+      aria-hidden="true"
+      class="custom-button__icon custom-button__icon--left"
+    />
+  }
+
+  <!-- ── Label de texto ────────────────────────────────────────────────────── -->
+  <span class="custom-button__label">{{ label() }}</span>
+
+  <!-- ── Slot para conteúdo projetado (complementa ou substitui o label) ───── -->
+  <ng-content />
+
+  <!-- ── Ícone direita — oculto durante loading ───────────────────────────── -->
+  @if (iconName() && iconPos() === 'right' && !loading()) {
+    <fa-icon
+      [icon]="['fas', iconName()!]"
+      aria-hidden="true"
+      class="custom-button__icon custom-button__icon--right"
+    />
+  }
+
 </button>
