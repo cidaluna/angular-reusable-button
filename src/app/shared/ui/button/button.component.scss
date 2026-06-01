@@ -142,14 +142,65 @@
     &:not([data-variant="outlined"]) {
       background-color: var(--color-gray-300) !important; // Tom fosco opaco
       color: var(--color-gray-600) !important; // Texto legível, porém suavizado
-      box-shadow: 0 2px 0 0 var(--color-gray-600) !important; // Sombra achatada de feedback estático
+      box-shadow: 0 1px 0 0 var(--color-gray-600) !important; // Sombra achatada de feedback estático
     }
 
     // Tratamento exclusivo para a variante OUTLINED desabilitada
     &[data-variant="outlined"] {
       background-color: var(--color-gray-100) !important;
       color: var(--color-gray-300) !important; // Linhas e textos perdem o contraste ativo
-      box-shadow: inset 0 0 0 2px var(--color-gray-300) !important; // Borda sutil e plana
+      box-shadow: inset 0 0 0 1px var(--color-gray-300) !important; // Borda sutil e plana
     }
   }
+
+
+  // ── Estado: Loading ────────────────────────────────────────────────────────
+  // A classe .custom-button--loading é aplicada pelo buttonClasses() computed
+  &.custom-button--loading {
+    cursor: wait;
+    // Mantém as cores da variante ativa — apenas substitui o conteúdo pelo spinner
+    // O template @if já esconde ícone e mantém o label; o spinner aparece no lugar
+    pointer-events: none; // Garante que nenhum clique passe mesmo que :disabled falhe
+  }
+
+  // ── Spinner ────────────────────────────────────────────────────────────────
+  // Injetado no template quando loading() === true
+  .custom-button__spinner {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 2.5px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: btn-spin 0.65s linear infinite;
+    flex-shrink: 0;
+  }
+
+  // ── Estado: Disabled ──────────────────────────────────────────────────────
+  // O SCSS usa :disabled nativo — não precisa de classe extra
+  // &:disabled {
+  //   cursor: not-allowed;
+  //   transform: none !important;
+
+  //   // Botões sólidos desabilitados (primary e secondary)
+  //   &:not([data-variant="outlined"]) {
+  //     background-color: var(--color-gray-300) !important;
+  //     color: var(--color-gray-900) !important;
+  //     box-shadow: 0 2px 0 0 var(--color-gray-600) !important;
+  //   }
+
+  //   // Outlined desabilitado
+  //   &[data-variant="outlined"] {
+  //     background-color: var(--color-gray-100) !important;
+  //     color: var(--color-gray-900) !important;
+  //     box-shadow: inset 0 0 0 2px var(--color-gray-300) !important;
+  //   }
+  // }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Animação do spinner — definida fora do bloco para não duplicar em :host
+// ─────────────────────────────────────────────────────────────────────────────
+@keyframes btn-spin {
+  to { transform: rotate(360deg); }
 }

@@ -1,11 +1,8 @@
-import { Component, EventEmitter, HostBinding, HostListener, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, computed, DestroyRef, HostBinding, HostListener, inject, input, output, signal } from '@angular/core';
 import { ButtonClickEvent, ButtonType, ButtonVariant } from '../../interfaces/button.interface';
 import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-
-// Registro global privado na memória da aplicação.
-// Um 'Set' no JavaScript armazena apenas valores únicos e possui busca instantânea.
-const activeButtonIds = new Set<string>();
+import { ButtonIdRegistryService } from '../../services/button-id-registry.service';
 
 @Component({
   selector: 'app-button',
@@ -14,129 +11,215 @@ const activeButtonIds = new Set<string>();
   templateUrl: './button.component.html',
   styleUrls: ['./button.component.scss']
 })
-export class ButtonComponent implements OnInit, OnDestroy {
-  @Input({ required: true }) label!: string;
-  @Input() id?: string;
-  @Input() iconName?: string;
-  @Input() iconPos?: 'left' | 'right' = 'left';
-  @Input() ariaLabel?: string;
-  @Input() variant?: ButtonVariant; // Padrão primary azul
-  @Input() rounded?: string;
-  @Input() loading?: string;
-  @Input() disabled?: boolean = false;
-  @Input() type?: ButtonType;
+export class ButtonComponent {
+  // ───────────  Injetando o service que controla o id em uso ──────────────
+  private readonly idRegistry  = inject(ButtonIdRegistryService);
+  private readonly destroyRef  = inject(DestroyRef);
 
+  // ── Inputs (signal API) ───── [migrado de @Input() para input()] ─────────
+  /** Texto exibido no botão. Obrigatório — erro de compilação se omitido. */
+  readonly label    = input.required<string>();
+
+  /** Nome do ícone FontAwesome (ex: faTrash). Opcional. */
+  readonly iconName = input<string | undefined>(undefined);
+
+  /** Posição do ícone em relação ao label. */
+  readonly iconPos  = input<'left' | 'right'>('left');
+
+  /** Label alternativo para leitores de tela quando o texto visível não for suficiente. */
+  readonly ariaLabel = input<string | undefined>(undefined);
+
+  /** Variante visual do botão (primary, secondary, ghost, danger…). */
+  readonly variant  = input<ButtonVariant | undefined>(undefined);
+
+  /** Borda arredondada estilo pill. */
+  readonly rounded  = input<boolean>(false);
+
+  /** Exibe spinner e bloqueia interações enquanto uma ação estiver em andamento. */
+  readonly loading  = input<boolean>(false);
+
+  /** Desabilita o botão explicitamente. */
+  readonly disabled = input<boolean>(false);
+
+  /** Tipo HTML nativo do botão: button | submit | reset. */
+  readonly type     = input<ButtonType>('button');
+
+  /** Largura do componente host. Injetada como atributo data-width no elemento <app-button>. */
   // Toda vez que receber o input width, pegue esse valor recebido e injete na casca externa <app-button> automaticamente
-  @Input() @HostBinding('attr.data-width') width: 'auto' | 'full' = 'auto';
+  readonly width    = input<'auto' | 'full'>('auto');
+  //@Input() @HostBinding('attr.data-width') width: 'auto' | 'full' = 'auto';
 
-  // Gerenciador Nativo de Foco de Teclado (Tabindex)
+
+  // ── Output ────────────────────────────────────────────────────────────────
+  /** Emitido ao clicar (mouse ou teclado). Carrega id, label e origem da interação. */
+  readonly buttonClick = output<ButtonClickEvent>();
+
+  // ── Estado interno ─────────────────────────────────────────────────────────
+
+  /**
+   * ID único gerado por criptografia e registrado no ButtonIdRegistry.
+   * Calculado uma única vez na construção — sem janela de valor vazio.
+   */
+  protected readonly generatedId = signal(this.buildUniqueId());
+
+  // ── Computed: estado inativo ───────────────────────────────────────────────
+
+  /** Verdadeiro se o botão estiver desabilitado OU em loading. */
+  protected readonly isInactive = computed(
+    () => this.disabled() || this.loading()
+  );
+
+  /**
+   * Classes CSS do <button> interno.
+   *
+   * DECISÃO DE DESIGN — por que não há classes de variante ou width aqui:
+   * Seu SCSS estiliza via atributos data-* ([data-variant], [data-width], [data-icon-pos])
+   * e via :disabled nativo. Essas propriedades já são aplicadas como [attr.*] no template,
+   * então o computed só precisa gerenciar o que o SCSS não resolve por atributo:
+   *
+   * ✔ custom-button        — classe base, sempre presente
+   * ✔ custom-button--loading  — controla visibilidade do spinner no SCSS
+   * ✔ custom-button--rounded  — borda pill, se não estiver no seu SCSS adicione a regra
+   * ✔ custom-button--icon-only — padding simétrico quando não há label, só ícone
+   *
+   * ✘ custom-button--primary/secondary/outlined — desnecessário, SCSS usa [data-variant]
+   * ✘ custom-button--disabled                  — desnecessário, SCSS usa :disabled nativo
+   * ✘ custom-button--full                      — desnecessário, SCSS usa [data-width]
+   */
+  protected readonly buttonClasses = computed(() => ({
+    'custom-button':             true,
+    'custom-button--loading':    this.loading(),
+    'custom-button--rounded':    this.rounded(),
+    'custom-button--icon-only':  !!this.iconName() && !this.label(),
+  }));
+
+  // ── HostBindings ──────────────────────────────────────────────────────────
+
+  /** Injeta data-width na casca <app-button> para controle de largura via CSS. */
+  @HostBinding('attr.data-width')
+  get hostWidth(): string {
+    return this.width();
+  }
+
+  /**
+   * Gerencia o tabindex diretamente no host.
+   * -1 → botão fora da fila de teclado (inativo).
+   *  0 → botão na ordem natural de foco da página.
+   */
   @HostBinding('attr.tabindex')
-  get tabIndex(): number {
-    // Se o botão estiver desabilitado, ele sai da fila do teclado (-1)
-    // Se estiver ativo, ele entra na ordem natural de foco da página (0)
-    const isDisabled = this.disabled || false;
-    return isDisabled ? -1 : 0;
+  get hostTabIndex(): number {
+    return this.isInactive() ? -1 : 0;
   }
 
-  // Garante que o navegador e os leitores de tela identifiquem <app-button> como um botão real
-  @HostBinding('attr.role') protected readonly role = 'button';
+  /** Identifica <app-button> como botão real para navegadores e leitores de tela. */
+  @HostBinding('attr.role')
+  protected readonly role = 'button';
 
-  // Informa aos leitores de tela se o botão está desabilitado na casca
+  /** Comunica o estado desabilitado para leitores de tela via aria-disabled. */
   @HostBinding('attr.aria-disabled')
-  get ariaDisabled(): boolean {
-    // No JavaScript/TypeScript, a dupla exclamação converte qualquer valor (inclusive undefined) para um booleano real (true ou false)
-    return !!this.disabled; // undefined vira false
+  get hostAriaDisabled(): boolean {
+    return this.isInactive();
   }
 
-  @Output() btnClick = new EventEmitter<ButtonClickEvent>();
+  // ── Construtor ────────────────────────────────────────────────────────────
 
-  // ID que será injetado no DOM
-  protected generatedId: string = '';
+  constructor() {
+    // Registra o ID gerado no serviço global de controle de unicidade
+    this.idRegistry.register(this.generatedId());
 
-  ngOnInit(): void {
-    this.initializeComponent();
+    // Libera o ID ao destruir o componente — evita memory leak em listas dinâmicas
+    this.destroyRef.onDestroy(() =>
+      this.idRegistry.release(this.generatedId())
+    );
   }
 
-  ngOnDestroy(): void {
-    // Quando a tela muda ou o botão deixa de existir, liberamos o ID da memória
-    activeButtonIds.delete(this.generatedId);
-  }
 
-  // Escuta o clique físico do mouse na casca do componente
+  // ── HostListeners ─────────────────────────────────────────────────────────
+
+  /** Escuta cliques físicos do mouse na casca do componente. */
   @HostListener('click', ['$event'])
-  onClick(event: MouseEvent) {
-    if (this.disabled) {
+  protected onMouseClick(event: MouseEvent): void {
+    if (this.isInactive()) {
       event.preventDefault();
       event.stopPropagation();
       return;
     }
-    this.emitEvent('mouse'); // Dispara o evento avisando que foi pelo mouse
+    this.emitButtonClick('mouse'); // Dispara o evento avisando que foi pelo mouse
   }
 
-  // Escuta as teclas Enter e Espaço quando o botão estiver focado pelo teclado
+  /**
+   * Escuta Enter e Espaço para suporte a teclado.
+   * Necessário porque <app-button> é um custom element, não um <button> nativo.
+   * preventDefault() evita que Espaço role a página.
+   */
   @HostListener('keydown', ['$event'])
-  onKeyDown(event: KeyboardEvent) {
-    if (this.disabled) return;
+  protected onKeyDown(event: KeyboardEvent): void {
+    if (this.isInactive()) return;
 
-    // Se pressionar Enter (Key: Enter) ou Barra de Espaço (Key: ' ')
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault(); // Evita que a página role para baixo ao apertar Espaço
-      this.emitEvent('keyboard'); // Dispara o evento avisando que foi pelo teclado
+      this.emitButtonClick('keyboard'); // Dispara o evento avisando que foi pelo teclado
     }
   }
 
-   // Função auxiliar que monta o objeto e envia de fato para o pai
-  private emitEvent(origin: 'mouse' | 'keyboard'): void {
-    this.btnClick.emit({
-      id: this.generatedId,
-      label: this.label,
-      triggeredBy: origin
+ // ── Métodos privados ──────────────────────────────────────────────────────
+
+  /**
+   * Monta o payload e emite o output buttonClick.
+   * Separado dos listeners para respeitar o SRP — cada método faz uma coisa.
+   */
+  private emitButtonClick(origin: 'mouse' | 'keyboard'): void {
+    this.buttonClick.emit({
+      id:          this.generatedId(),
+      label:       this.label(),
+      triggeredBy: origin,
     });
   }
 
-  protected initializeComponent() {
-    let uniqueId = '';
-
-    // Loop de segurança: Gera um sufixo e verifica se ele já existe no Set global.
-    // Se o ID for idêntico, o loop roda de novo e gera um novo ID.
+  /**
+   * Gera um ID único verificando colisões no registry antes de retornar.
+   * Loop de segurança: na prática nunca passa da primeira iteração.
+   */
+  private buildUniqueId(): string {
+    let id: string;
     do {
-      const randomSuffix = this.generateSuffix();
-      uniqueId = `angular-reusable-button-${randomSuffix}`;
-    } while (activeButtonIds.has(uniqueId));
-
-    // Salva o ID no componente e registra no Set global para que nenhum outro botão use
-    this.generatedId = uniqueId;
-    activeButtonIds.add(uniqueId);
+      id = `angular-reusable-button-${this.generateSuffix()}`;
+    } while (this.idRegistry?.has(id)); // ?. seguro durante a construção inicial
+    return id;
   }
 
+   /**
+   * Gera um sufixo aleatório de 6 caracteres (3 letras + 3 números) via Web Crypto API.
+   * Usa Fisher-Yates para embaralhar — distribuição uniforme, sem bias do .sort().
+   */
   private generateSuffix(): string {
-    const letters = 'abcdefghijklmnopqrstuvwxyz';
-    const numbers = '0123456789';
+    const LETTERS = 'abcdefghijklmnopqrstuvwxyz';
+    const DIGITS  = '0123456789';
 
-    let randomLetters = '';
-    let randomNumbers = '';
-
-    // Cria um array de bytes aleatórios usando a API de criptografia do navegador
     const randomBytes = new Uint32Array(6);
     crypto.getRandomValues(randomBytes);
 
-    // Seleciona 3 letras aleatórias
-    for (let i = 0; i < 3; i++) {
-      randomLetters += letters[randomBytes[i] % letters.length];
-    }
+    const chars = [
+      ...Array.from({ length: 3 }, (_, i) => LETTERS[randomBytes[i]     % LETTERS.length]),
+      ...Array.from({ length: 3 }, (_, i) => DIGITS [randomBytes[i + 3] % DIGITS.length]),
+    ];
 
-    // Seleciona 3 números aleatórios
-    for (let i = 3; i < 6; i++) {
-      randomNumbers += numbers[randomBytes[i] % numbers.length];
-    }
-
-    // Junta as duas partes e embaralha o array final para misturar letras e números
-    const shuffledCharacters = (randomLetters + randomNumbers).split('');
-
-    // Embaracamento rápido usando o último byte aleatório para definir a ordem
-    return shuffledCharacters
-      .sort(() => (randomBytes[5] % 3) - 1)
-      .join('');
+    return this.fisherYatesShuffle(chars, randomBytes).join('');
   }
 
+  /**
+   * Embaralhamento Fisher-Yates — O(n), distribuição uniforme.
+   * Substitui o .sort(() => random) que introduzia bias de ordenação.
+   */
+  private fisherYatesShuffle(arr: string[], randomBytes: Uint32Array): string[] {
+    const result = [...arr];
+    const extraBytes = new Uint32Array(result.length);
+    crypto.getRandomValues(extraBytes);
+
+    for (let i = result.length - 1; i > 0; i--) {
+      const j = extraBytes[i] % (i + 1);
+      [result[i], result[j]] = [result[j], result[i]];
+    }
+    return result;
+  }
 }
